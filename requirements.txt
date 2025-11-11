@@ -1,0 +1,10 @@
+Flask
+pandas
+numpy
+scikit-learn
+PuLP
+streamlit
+geopandas
+matplotlib
+pytest
+jupyter
