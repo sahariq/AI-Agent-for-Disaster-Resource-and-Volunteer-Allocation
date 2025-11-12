@@ -1,34 +1,24 @@
 import unittest
-from src.optimization.solver import allocate_resources
-from src.optimization.model import create_model
-from src.optimization.constraints import add_constraints
+import sys
+import os
+sys.path.append(os.path.join(os.path.dirname(__file__), '..', 'multi-agent-system'))
+from workers.worker_optimization_agent import OptimizationWorkerAgent
+import pandas as pd
 
 class TestOptimization(unittest.TestCase):
 
     def setUp(self):
-        self.model = create_model()
-        self.resources = {
-            'ambulances': 10,
-            'doctors': 20,
-            'nurses': 30
-        }
-        self.severity = {
-            'zone_1': 5,
-            'zone_2': 3,
-            'zone_3': 8
-        }
+        self.agent = OptimizationWorkerAgent('test_opt_agent')
+        self.severity_data = pd.DataFrame({
+            'zone': ['zone_1', 'zone_2', 'zone_3'],
+            'severity': [5, 3, 8]
+        })
+        self.available_volunteers = 50
 
     def test_allocate_resources(self):
-        allocation = allocate_resources(self.model, self.resources, self.severity)
-        self.assertIsInstance(allocation, dict)
-        self.assertGreaterEqual(sum(allocation.values()), 0)
-
-    def test_model_creation(self):
-        self.assertIsNotNone(self.model)
-
-    def test_add_constraints(self):
-        constraints = add_constraints(self.model, self.resources)
-        self.assertTrue(constraints)
+        results, status, obj_value = self.agent.allocate_resources(self.severity_data, self.available_volunteers)
+        self.assertIsInstance(results, dict)
+        self.assertGreaterEqual(sum(results.values()), 0)
 
 if __name__ == '__main__':
     unittest.main()
