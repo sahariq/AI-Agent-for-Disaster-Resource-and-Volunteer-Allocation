@@ -1,0 +1,23 @@
+{
+  "{\"available_volunteers\": 12, \"zones\": [{\"id\": \"Z1\", \"required_volunteers\": 8, \"severity\": 5}, {\"id\": \"Z2\", \"required_volunteers\": 6, \"severity\": 3}, {\"id\": \"Z3\", \"required_volunteers\": 5, \"severity\": 4}]}": {
+    "allocation_plan": [
+      {
+        "zone_id": "Z1",
+        "assigned_volunteers": 8,
+        "severity": 5
+      },
+      {
+        "zone_id": "Z2",
+        "assigned_volunteers": 4,
+        "severity": 3
+      },
+      {
+        "zone_id": "Z3",
+        "assigned_volunteers": 0,
+        "severity": 4
+      }
+    ],
+    "remaining_volunteers": 0,
+    "timestamp": "2025-11-12T18:32:03.103000"
+  }
+}
