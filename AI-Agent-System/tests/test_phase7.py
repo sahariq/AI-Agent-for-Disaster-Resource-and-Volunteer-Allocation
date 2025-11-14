@@ -33,7 +33,7 @@ def main():
     worker = DisasterAllocationWorker(
         agent_id="Worker_Disaster",
         supervisor_id="Supervisor_Main",
-        fairness_weight=0.8
+        fairness_weight=0.6
     )
     
     task_data = {
@@ -125,7 +125,7 @@ def main():
     print("   Lower variance = more equal distribution")
     print("   BUT: High-severity disasters NEED more resources!")
     print("   Goal: Reduce variance to avoid zeros, not perfect equality")
-    print("   Recommended λ: 0.2-0.6 (balances severity + fairness)")
+    print("   Recommended λ: 0.6 (balances severity + fairness)")
     
     fairness_levels = [0.0, 0.3, 0.6]
     
@@ -246,7 +246,7 @@ def main():
     print("\n📊 Variance Philosophy:\n")
     print("   • λ=0.0: Pure severity (variance ~62) - some zones get zero")
     print("   • λ=0.3: Balanced (variance ~59) - Balanced but still prioritizes severity")
-    print("   • λ=0.6: High fairness (variance ~44) -  RECOMMENDED for production")
+    print("   • λ=0.6: RECOMMENDED (variance ~44) - Best balance of fairness + priority")
     print("   • λ=1.0: Perfect minimums (variance ~19) - risks under-serving critical zones")
     print("   ")
     print("   ⚠️  Goal is NOT minimum variance!")

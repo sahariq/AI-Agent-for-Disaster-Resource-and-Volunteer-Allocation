@@ -31,7 +31,7 @@ class VolunteerAllocator:
             fairness_weight: Fairness parameter (0 = pure severity, 1 = guaranteed minimum).
                            When > 0, ensures each zone gets minimum baseline allocation
                            proportional to severity before optimizing remainder.
-                           Recommended: 0.0 (pure optimization) or 0.2-0.3 (fair minimum).
+                           Recommended: 0.6 (balanced fairness + severity priority).
         """
         self.fairness_weight = fairness_weight
         self.model_version = "0.2.0"  # Updated for simplified fairness
@@ -75,7 +75,7 @@ class VolunteerAllocator:
             zone['id']: LpVariable(
                 f"x_{zone['id']}", 
                 lowBound=0,
-                upBound=zone.get('required_volunteers', total_volunteers),
+                upBound=zone.get('capacity', zone.get('required_volunteers', total_volunteers)),
                 cat=LpInteger
             )
             for zone in zones
