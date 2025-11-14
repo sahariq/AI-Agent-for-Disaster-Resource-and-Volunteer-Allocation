@@ -28,11 +28,13 @@ class VolunteerAllocator:
         Initialize the allocator.
         
         Args:
-            fairness_weight: Lambda parameter for fairness penalty (0 = pure severity).
-                           Will be used in Phase 5.
+            fairness_weight: Fairness parameter (0 = pure severity, 1 = guaranteed minimum).
+                           When > 0, ensures each zone gets minimum baseline allocation
+                           proportional to severity before optimizing remainder.
+                           Recommended: 0.0 (pure optimization) or 0.2-0.3 (fair minimum).
         """
         self.fairness_weight = fairness_weight
-        self.model_version = "0.1.0"
+        self.model_version = "0.2.0"  # Updated for simplified fairness
     
     def allocate(
         self,
@@ -69,28 +71,43 @@ class VolunteerAllocator:
         prob = LpProblem("Disaster_Volunteer_Allocation", LpMaximize)
         
         # Decision variables: x[zone_id] = number of volunteers allocated
-        # Phase 2: Start with continuous variables for simplicity
-        # Phase 6: Will switch to LpInteger
         x = {
             zone['id']: LpVariable(
                 f"x_{zone['id']}", 
                 lowBound=0,
-                upBound=zone.get('required_volunteers', total_volunteers),  # Basic upper bound
-                cat=LpInteger  # Using integer from the start for realism
+                upBound=zone.get('required_volunteers', total_volunteers),
+                cat=LpInteger
             )
             for zone in zones
         }
         
         # Objective function: Maximize severity-weighted impact
-        # Phase 2: Simple severity-based objective
-        # Phase 5: Will add fairness penalty
-        objective = lpSum([zone['severity'] * x[zone['id']] for zone in zones])
-        prob += objective, "Maximize_Severity_Weighted_Impact"
+        severity_impact = lpSum([zone['severity'] * x[zone['id']] for zone in zones])
+        prob += severity_impact, "Maximize_Severity_Impact"
         
         # Constraint 1: Total volunteer budget
         prob += (
             lpSum([x[zone['id']] for zone in zones]) <= total_volunteers
         ), "Total_Volunteer_Budget"
+        
+        # Constraint 1b: Fairness - Minimum allocation guarantee (Phase 5)
+        # Each zone gets a minimum baseline proportional to its severity
+        if self.fairness_weight > 0 and len(zones) > 0:
+            total_severity = sum(zone['severity'] for zone in zones)
+            if total_severity > 0:
+                # Reserve a portion of volunteers for minimum allocations
+                reserved_for_min = total_volunteers * self.fairness_weight
+                
+                for zone in zones:
+                    # Minimum allocation: proportional share of reserved volunteers
+                    # Using float to preserve precision, solver will round to int
+                    min_allocation = (zone['severity'] / total_severity) * reserved_for_min
+                    
+                    # Ensure each zone gets at least this minimum (rounded up)
+                    # This ensures no zone gets completely ignored
+                    prob += (
+                        x[zone['id']] >= min_allocation
+                    ), f"Fairness_Minimum_{zone['id']}"
         
         # Constraint 2: Per-zone capacity limits (Phase 3)
         for zone in zones:
@@ -156,6 +173,17 @@ class VolunteerAllocator:
         # Calculate totals
         total_allocated = sum(entry['allocated'] for entry in allocation_plan)
         
+        # Calculate fairness metrics
+        allocations = [entry['allocated'] for entry in allocation_plan]
+        if len(allocations) > 0:
+            mean_allocation = sum(allocations) / len(allocations)
+            variance = sum((a - mean_allocation) ** 2 for a in allocations) / len(allocations)
+            std_deviation = variance ** 0.5
+        else:
+            mean_allocation = 0
+            variance = 0
+            std_deviation = 0
+        
         # Build result dictionary
         result = {
             "allocation_plan": allocation_plan,
@@ -165,6 +193,12 @@ class VolunteerAllocator:
             "model_type": "Integer Program",
             "timestamp": datetime.utcnow().isoformat(),
             "fairness_weight": self.fairness_weight,
+            "fairness_metrics": {
+                "mean_allocation": round(mean_allocation, 2),
+                "variance": round(variance, 2),
+                "std_deviation": round(std_deviation, 2),
+                "coefficient_of_variation": round(std_deviation / mean_allocation * 100, 2) if mean_allocation > 0 else 0
+            },
             "solver_status": prob.status
         }
         
@@ -184,7 +218,7 @@ class VolunteerAllocator:
                 "severity_optimization": True,
                 "capacity_constraints": True,       # Phase 3 - ENABLED
                 "resource_coupling": True,          # Phase 4 - ENABLED
-                "fairness_penalty": False,          # Phase 5
+                "fairness_penalty": self.fairness_weight > 0,  # Phase 5 - ENABLED if λ > 0
                 "integer_variables": True           # Phase 6
             }
         }
