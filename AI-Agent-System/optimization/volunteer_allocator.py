@@ -90,7 +90,7 @@ class VolunteerAllocator:
             lpSum([x[zone['id']] for zone in zones]) <= total_volunteers
         ), "Total_Volunteer_Budget"
         
-        # Constraint 1b: Fairness - Minimum allocation guarantee (Phase 5)
+        # Constraint 1b: Fairness - Minimum allocation guarantee
         # Each zone gets a minimum baseline proportional to its severity
         if self.fairness_weight > 0 and len(zones) > 0:
             total_severity = sum(zone['severity'] for zone in zones)
@@ -109,7 +109,7 @@ class VolunteerAllocator:
                         x[zone['id']] >= min_allocation
                     ), f"Fairness_Minimum_{zone['id']}"
         
-        # Constraint 2: Per-zone capacity limits (Phase 3)
+        # Constraint 2: Per-zone capacity limits
         for zone in zones:
             zone_id = zone['id']
             if 'capacity' in zone:
@@ -117,7 +117,7 @@ class VolunteerAllocator:
                     x[zone_id] <= zone['capacity']
                 ), f"Capacity_Limit_{zone_id}"
         
-        # Constraint 3: Resource coupling (Phase 4)
+        # Constraint 3: Resource coupling
         # Volunteers need minimum resources to be effective
         for zone in zones:
             zone_id = zone['id']
@@ -126,8 +126,6 @@ class VolunteerAllocator:
                     x[zone_id] * zone['min_resources_per_volunteer'] 
                     <= zone['resources_available']
                 ), f"Resource_Coupling_{zone_id}"
-        
-        # Phase 5: Fairness constraints (to be added)
         
         # Solve the problem
         prob.solve(PULP_CBC_CMD(msg=0))  # msg=0 suppresses solver output
@@ -216,9 +214,9 @@ class VolunteerAllocator:
             "fairness_weight": self.fairness_weight,
             "features": {
                 "severity_optimization": True,
-                "capacity_constraints": True,       # Phase 3 - ENABLED
-                "resource_coupling": True,          # Phase 4 - ENABLED
-                "fairness_penalty": self.fairness_weight > 0,  # Phase 5 - ENABLED if λ > 0
-                "integer_variables": True           # Phase 6
+                "capacity_constraints": True,       # Per-zone maximum volunteer limits
+                "resource_coupling": True,          # Equipment availability constraints
+                "fairness_penalty": self.fairness_weight > 0,  # Proportional minimum allocation guarantee
+                "integer_variables": True           # Whole volunteer allocation
             }
         }
