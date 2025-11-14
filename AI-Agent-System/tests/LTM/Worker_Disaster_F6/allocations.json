@@ -1,0 +1,78 @@
+{
+  "{\"available_volunteers\": 40, \"fairness_level\": 0.6, \"zones\": [{\"capacity\": 20, \"id\": \"Z1\", \"min_resources_per_volunteer\": 3, \"resources_available\": 100, \"severity\": 10}, {\"capacity\": 15, \"id\": \"Z2\", \"min_resources_per_volunteer\": 4, \"resources_available\": 80, \"severity\": 7}, {\"capacity\": 12, \"id\": \"Z3\", \"min_resources_per_volunteer\": 5, \"resources_available\": 60, \"severity\": 5}, {\"capacity\": 10, \"id\": \"Z4\", \"min_resources_per_volunteer\": 3, \"resources_available\": 50, \"severity\": 3}]}": {
+    "allocation_plan": [
+      {
+        "zone_id": "Z1",
+        "assigned_volunteers": 20,
+        "severity": 10
+      },
+      {
+        "zone_id": "Z2",
+        "assigned_volunteers": 12,
+        "severity": 7
+      },
+      {
+        "zone_id": "Z3",
+        "assigned_volunteers": 5,
+        "severity": 5
+      },
+      {
+        "zone_id": "Z4",
+        "assigned_volunteers": 3,
+        "severity": 3
+      }
+    ],
+    "remaining_volunteers": 0,
+    "timestamp": "2025-11-14T05:06:30.183649",
+    "optimization_metadata": {
+      "objective_value": 318.0,
+      "solve_time_seconds": 0.0334,
+      "model_type": "Integer Program",
+      "fairness_weight": 0.6,
+      "fairness_metrics": {
+        "mean_allocation": 10.0,
+        "variance": 44.5,
+        "std_deviation": 6.67,
+        "coefficient_of_variation": 66.71
+      }
+    }
+  },
+  "{\"available_volunteers\": 40, \"fairness_level\": 0.6, \"fairness_weight\": 0.6, \"zones\": [{\"capacity\": 20, \"id\": \"Z1\", \"min_resources_per_volunteer\": 3, \"resources_available\": 100, \"severity\": 10}, {\"capacity\": 15, \"id\": \"Z2\", \"min_resources_per_volunteer\": 4, \"resources_available\": 80, \"severity\": 7}, {\"capacity\": 12, \"id\": \"Z3\", \"min_resources_per_volunteer\": 5, \"resources_available\": 60, \"severity\": 5}, {\"capacity\": 10, \"id\": \"Z4\", \"min_resources_per_volunteer\": 3, \"resources_available\": 50, \"severity\": 3}]}": {
+    "allocation_plan": [
+      {
+        "zone_id": "Z1",
+        "assigned_volunteers": 20,
+        "severity": 10
+      },
+      {
+        "zone_id": "Z2",
+        "assigned_volunteers": 12,
+        "severity": 7
+      },
+      {
+        "zone_id": "Z3",
+        "assigned_volunteers": 5,
+        "severity": 5
+      },
+      {
+        "zone_id": "Z4",
+        "assigned_volunteers": 3,
+        "severity": 3
+      }
+    ],
+    "remaining_volunteers": 0,
+    "timestamp": "2025-11-14T05:20:03.069059",
+    "optimization_metadata": {
+      "objective_value": 318.0,
+      "solve_time_seconds": 0.0163,
+      "model_type": "Integer Program",
+      "fairness_weight": 0.6,
+      "fairness_metrics": {
+        "mean_allocation": 10.0,
+        "variance": 44.5,
+        "std_deviation": 6.67,
+        "coefficient_of_variation": 66.71
+      }
+    }
+  }
+}
