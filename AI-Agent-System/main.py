@@ -10,7 +10,7 @@ if __name__ == "__main__":
         {"id": "Z3", "severity": 4, "required_volunteers": 5},
     ]
 
-    available_volunteers = 12
+    available_volunteers = 15
 
     print("=== System Startup ===")
     print(supervisor.health_check())
