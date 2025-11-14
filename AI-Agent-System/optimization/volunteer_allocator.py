@@ -100,7 +100,16 @@ class VolunteerAllocator:
                     x[zone_id] <= zone['capacity']
                 ), f"Capacity_Limit_{zone_id}"
         
-        # Phase 4: Resource coupling constraints (to be added)
+        # Constraint 3: Resource coupling (Phase 4)
+        # Volunteers need minimum resources to be effective
+        for zone in zones:
+            zone_id = zone['id']
+            if 'resources_available' in zone and 'min_resources_per_volunteer' in zone:
+                prob += (
+                    x[zone_id] * zone['min_resources_per_volunteer'] 
+                    <= zone['resources_available']
+                ), f"Resource_Coupling_{zone_id}"
+        
         # Phase 5: Fairness constraints (to be added)
         
         # Solve the problem
@@ -124,6 +133,14 @@ class VolunteerAllocator:
             if 'capacity' in zone and zone['capacity'] > 0:
                 capacity_used = (allocated / zone['capacity']) * 100
             
+            # Calculate resource usage
+            resources_used = 0
+            resources_used_pct = 0
+            if 'min_resources_per_volunteer' in zone:
+                resources_used = allocated * zone['min_resources_per_volunteer']
+                if 'resources_available' in zone and zone['resources_available'] > 0:
+                    resources_used_pct = (resources_used / zone['resources_available']) * 100
+            
             allocation_plan.append({
                 "zone_id": zone['id'],
                 "severity": zone['severity'],
@@ -131,7 +148,9 @@ class VolunteerAllocator:
                 "capacity": zone.get('capacity', None),
                 "allocated": allocated,
                 "satisfaction_pct": round(satisfaction, 1),
-                "capacity_used_pct": round(capacity_used, 1) if 'capacity' in zone else None
+                "capacity_used_pct": round(capacity_used, 1) if 'capacity' in zone else None,
+                "resources_used": round(resources_used, 1) if 'min_resources_per_volunteer' in zone else None,
+                "resources_used_pct": round(resources_used_pct, 1) if 'resources_available' in zone else None
             })
         
         # Calculate totals
@@ -164,7 +183,7 @@ class VolunteerAllocator:
             "features": {
                 "severity_optimization": True,
                 "capacity_constraints": True,       # Phase 3 - ENABLED
-                "resource_coupling": False,         # Phase 4
+                "resource_coupling": True,          # Phase 4 - ENABLED
                 "fairness_penalty": False,          # Phase 5
                 "integer_variables": True           # Phase 6
             }
