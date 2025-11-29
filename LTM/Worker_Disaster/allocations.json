@@ -1,0 +1,30 @@
+{
+  "{\"available_volunteers\": 12, \"fairness_weight\": 0.6, \"zones\": [{\"capacity\": 8, \"id\": \"Z1\", \"min_resources_per_volunteer\": 4, \"required_volunteers\": 8, \"resources_available\": 50, \"severity\": 5}, {\"capacity\": 6, \"id\": \"Z2\", \"min_resources_per_volunteer\": 3, \"required_volunteers\": 6, \"resources_available\": 30, \"severity\": 3}]}": {
+    "allocation_plan": [
+      {
+        "zone_id": "Z1",
+        "assigned_volunteers": 8,
+        "severity": 5
+      },
+      {
+        "zone_id": "Z2",
+        "assigned_volunteers": 4,
+        "severity": 3
+      }
+    ],
+    "remaining_volunteers": 0,
+    "timestamp": "2025-11-27T17:51:06.044049",
+    "optimization_metadata": {
+      "objective_value": 52.0,
+      "solve_time_seconds": 0.3633,
+      "model_type": "Integer Program",
+      "fairness_weight": 0.6,
+      "fairness_metrics": {
+        "mean_allocation": 6.0,
+        "variance": 4.0,
+        "std_deviation": 2.0,
+        "coefficient_of_variation": 33.33
+      }
+    }
+  }
+}

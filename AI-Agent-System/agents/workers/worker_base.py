@@ -2,6 +2,7 @@ from abc import ABC, abstractmethod
 import json
 import uuid
 from typing import Any, Optional
+from datetime import datetime
 
 class AbstractWorkerAgent(ABC):
     """
@@ -86,7 +87,7 @@ class AbstractWorkerAgent(ABC):
             "related_message_id": related_msg_id,
             "status": status,
             "results": results,
-            "timestamp": "..." 
+            "timestamp": datetime.utcnow().isoformat() + "Z"
         }
         self.send_message(self._supervisor_id, report)
         self._current_task_id = None

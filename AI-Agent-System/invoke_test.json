@@ -1,0 +1,35 @@
+{
+    "message_id": "a4b8c9d0-1e2f-3g4h-5i6j-7k8l9test",
+    "sender": "Supervisor_Main",
+    "recipient": "Worker_Disaster",
+    "type": "task_assignment",
+    "task": {
+      "name": "allocate_resources",
+      "priority": 1,
+      "parameters": {
+        "zones": [
+          {
+            "id": "Z1",
+            "name": "Zone A",
+            "severity": 5,
+            "required_volunteers": 8,
+            "capacity": 8
+          },
+          {
+            "id": "Z2",
+            "name": "Zone B",
+            "severity": 3,
+            "required_volunteers": 4,
+            "capacity": 6
+          }
+        ],
+        "available_volunteers": 10,
+        "constraints": {
+          "fairness_weight": 0.6,
+          "scenario_id": "demo-1"
+        }
+      }
+    },
+    "timestamp": "2025-11-27T12:00:00Z"
+  }
+  

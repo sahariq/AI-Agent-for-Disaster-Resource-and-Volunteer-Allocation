@@ -1,4 +1,4 @@
-Flask
+Flask>=2.3.0,<3.0.0
 pandas
 numpy
 scikit-learn
@@ -8,3 +8,5 @@ geopandas
 matplotlib
 pytest
 jupyter
+pydantic
+PyYAML>=6.0

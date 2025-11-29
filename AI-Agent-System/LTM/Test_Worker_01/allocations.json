@@ -1,0 +1,30 @@
+{
+  "{\"available_volunteers\": 10, \"fairness_weight\": 0.6, \"zones\": [{\"id\": \"Z1\", \"required_volunteers\": 10, \"severity\": 8}, {\"id\": \"Z2\", \"required_volunteers\": 5, \"severity\": 5}]}": {
+    "allocation_plan": [
+      {
+        "zone_id": "Z1",
+        "assigned_volunteers": 7,
+        "severity": 8
+      },
+      {
+        "zone_id": "Z2",
+        "assigned_volunteers": 3,
+        "severity": 5
+      }
+    ],
+    "remaining_volunteers": 0,
+    "timestamp": "2025-11-29T16:04:28.205935",
+    "optimization_metadata": {
+      "objective_value": 71.0,
+      "solve_time_seconds": 0.0333,
+      "model_type": "Integer Program",
+      "fairness_weight": 0.6,
+      "fairness_metrics": {
+        "mean_allocation": 5.0,
+        "variance": 4.0,
+        "std_deviation": 2.0,
+        "coefficient_of_variation": 40.0
+      }
+    }
+  }
+}

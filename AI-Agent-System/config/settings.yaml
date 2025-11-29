@@ -1,0 +1,16 @@
+# Global System Settings
+system:
+  name: "AI-Agent-for-Disaster-Resource-and-Volunteer-Allocation"
+  version: "0.1.0"
+  log_level: "INFO"
+  
+# Worker Configuration
+workers:
+  default_fairness_weight: 0.6
+  ltm_base_path: "LTM"
+  
+# Communication Settings
+communication:
+  message_timeout_seconds: 30
+  retry_attempts: 3
+

@@ -1,0 +1,12 @@
+{
+  "workers": [
+    {
+      "id": "Worker_Disaster",
+      "type": "disaster_allocation",
+      "supervisor_id": "Supervisor_Main",
+      "fairness_weight": 0.6,
+      "ltm_enabled": true
+    }
+  ]
+}
+

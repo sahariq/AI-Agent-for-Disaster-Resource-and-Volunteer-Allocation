@@ -1,7 +1,7 @@
 # AI Agent for Disaster Resource and Volunteer Allocation - Codebase Documentation
 
 **Version:** 0.1.0  
-**Last Updated:** November 14, 2025  
+**Last Updated:** November 29, 2025  
 **Purpose:** This document provides a comprehensive overview of the project's architecture, design patterns, and implementation details for AI models and developers.
 
 ---
@@ -37,8 +37,9 @@ This system is a multi-agent AI solution designed to allocate volunteers and res
 - **Language**: Python 3.8+
 - **Key Libraries**: 
   - `pydantic` - Data validation and settings management
+  - `pulp` - Linear programming optimization (PuLP/CBC solver)
+  - `flask` - HTTP API server for supervisor-worker communication
   - `pandas` - Data manipulation (planned)
-  - `pulp` - Linear programming optimization (planned)
   - `streamlit` - Dashboard UI (planned)
 
 ---
@@ -86,7 +87,7 @@ AI-Agent-for-Disaster-Resource-and-Volunteer-Allocation/
 ├── sample_data.csv               # Sample disaster zone data
 │
 └── AI-Agent-System/              # Main system directory
-    ├── main.py                   # Application entry point
+    ├── main.py                   # Application entry point (deprecated - use API server)
     ├── supervisor_log.jsonl      # Audit log for supervisor actions
     │
     ├── agents/                   # Agent implementations
@@ -97,9 +98,17 @@ AI-Agent-for-Disaster-Resource-and-Volunteer-Allocation/
     │       ├── worker_base.py    # Abstract base class for workers
     │       └── disaster_worker.py # Disaster allocation worker
     │
+    ├── api/                      # HTTP API server
+    │   ├── __init__.py
+    │   └── server.py             # Flask API endpoints (/health, /invoke, /query)
+    │
     ├── communication/            # Communication layer
     │   ├── models.py             # Pydantic data models
     │   └── protocol.py           # Message type constants
+    │
+    ├── optimization/             # Optimization engine
+    │   ├── __init__.py
+    │   └── volunteer_allocator.py # PuLP-based allocation optimizer
     │
     └── LTM/                      # Long-Term Memory storage
         └── Worker_Disaster/
@@ -110,10 +119,11 @@ AI-Agent-for-Disaster-Resource-and-Volunteer-Allocation/
 
 | Directory | Purpose | Key Files |
 |-----------|---------|-----------|
-| `AI-Agent-System/` | Core system implementation | `main.py` |
-| `agents/supervisor/` | Supervisor agent logic | `supervisor.py` |
+| `AI-Agent-System/` | Core system implementation | `api/server.py` |
 | `agents/workers/` | Worker agent implementations | `worker_base.py`, `disaster_worker.py` |
+| `api/` | HTTP API server | `server.py` (Flask endpoints) |
 | `communication/` | Inter-agent communication | `models.py`, `protocol.py` |
+| `optimization/` | Allocation optimization engine | `volunteer_allocator.py` |
 | `LTM/` | Persistent storage | `allocations.json` |
 
 ---
@@ -567,13 +577,95 @@ prob = pulp.LpProblem("Volunteer_Allocation", pulp.LpMaximize)
 
 ### Adding Communication Channels
 
-**Current:** Console output (print statements)
+**Current:** 
+- **HTTP/REST API**: Flask endpoints for supervisor-worker communication ✅ **IMPLEMENTED**
+  - `GET /health` - Health check endpoint
+  - `POST /invoke` - Supervisor-style task_assignment → completion_report
+  - `POST /query` - Natural-language-friendly allocation endpoint
+- Console output (print statements) - For worker agent direct usage
 
 **Future Options:**
-- **HTTP/REST API**: Flask endpoints for supervisor-worker communication
 - **Message Queue**: RabbitMQ or Kafka for async messaging
 - **WebSockets**: Real-time bidirectional communication
 - **gRPC**: High-performance RPC for distributed deployments
+
+### HTTP API Integration
+
+**Status:** ✅ **IMPLEMENTED**
+
+The worker agent now exposes a Flask-based HTTP API server that implements the supervisor-worker communication protocol over HTTP.
+
+**Endpoints:**
+
+1. **GET /health** - Health check for supervisor monitoring
+   - Returns: `{"status": "UP", "agent": "Worker_Disaster", "version": "0.1.0"}`
+   - Status Code: 200 on success, 500 on error
+
+2. **POST /invoke** - Supervisor handshake endpoint
+   - Accepts: Supervisor-style `task_assignment` message
+   - Returns: `completion_report` with allocation results
+   - Status Code: 200 on success, 400/500 on error
+   - Uses the same `run_allocation()` optimization engine as the worker agent
+
+3. **POST /query** - Natural-language-friendly endpoint
+   - Accepts: Natural language query + structured zones/volunteers
+   - Returns: Simplified response with allocation plan and metadata
+   - Status Code: 200 on success, 400/500 on error
+   - Includes `natural_language_query` in response metadata
+
+**Starting the Server:**
+
+```bash
+cd AI-Agent-System
+python -m api.server
+# Server runs on http://0.0.0.0:8000
+```
+
+**Example Supervisor Integration:**
+
+The `/invoke` endpoint accepts the standard supervisor-worker message format:
+
+```json
+{
+  "message_id": "uuid-1",
+  "sender": "Supervisor_Main",
+  "recipient": "Worker_Disaster",
+  "type": "task_assignment",
+  "task": {
+    "name": "allocate_resources",
+    "priority": 1,
+    "parameters": {
+      "zones": [...],
+      "available_volunteers": 12,
+      "constraints": {"fairness_weight": 0.6}
+    }
+  },
+  "timestamp": "2025-11-27T12:00:00Z"
+}
+```
+
+And returns a `completion_report`:
+
+```json
+{
+  "message_id": "uuid-2",
+  "sender": "Worker_Disaster",
+  "recipient": "Supervisor_Main",
+  "type": "completion_report",
+  "related_message_id": "uuid-1",
+  "status": "SUCCESS",
+  "results": {
+    "allocation_plan": [...],
+    "remaining_volunteers": 0,
+    "optimization_metadata": {...}
+  },
+  "timestamp": "2025-11-27T12:00:01Z"
+}
+```
+
+**Architecture:**
+
+The HTTP API uses the same centralized `run_allocation()` function as the worker agent, ensuring consistent optimization behavior across both interfaces. The API layer handles HTTP request/response formatting while delegating all optimization logic to the shared engine.
 
 ### Database Integration
 
@@ -655,7 +747,7 @@ class DatabaseLTM:
 
 ### Short-Term Features
 - [ ] Streamlit dashboard for visualization
-- [ ] REST API for external integrations
+- [x] REST API for external integrations ✅ **COMPLETED**
 - [ ] Multiple worker support in supervisor
 - [ ] Enhanced logging with levels (INFO, WARNING, ERROR)
 
@@ -678,13 +770,14 @@ This codebase implements a well-structured multi-agent system following software
 - Comprehensive documentation
 - Type-safe data models
 - Performance optimization (LTM caching)
+- HTTP API integration for supervisor communication ✅
 
 **Areas for Improvement:**
-- Allocation algorithm sophistication (add optimization)
 - Test coverage (unit and integration tests)
 - Error handling granularity
 - Configuration management
-- Production-ready communication layer
+- Production-ready deployment (Docker, load balancing)
+- Advanced NLP parsing for /query endpoint
 
 ---
 

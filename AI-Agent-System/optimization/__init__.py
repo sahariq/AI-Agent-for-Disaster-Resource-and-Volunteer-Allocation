@@ -5,6 +5,6 @@ This module provides mathematical optimization models using linear/integer progr
 to allocate volunteers and resources across disaster zones optimally.
 """
 
-from .volunteer_allocator import VolunteerAllocator
+from .volunteer_allocator import VolunteerAllocator, run_allocation
 
-__all__ = ['VolunteerAllocator']
+__all__ = ['VolunteerAllocator', 'run_allocation']

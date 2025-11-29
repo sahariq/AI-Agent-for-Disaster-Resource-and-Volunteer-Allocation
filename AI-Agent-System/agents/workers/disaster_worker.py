@@ -9,7 +9,7 @@ from .worker_base import AbstractWorkerAgent
 import sys
 import os
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..')))
-from optimization.volunteer_allocator import VolunteerAllocator
+from optimization.volunteer_allocator import run_allocation
 
 
 class DisasterAllocationWorker(AbstractWorkerAgent):
@@ -24,9 +24,9 @@ class DisasterAllocationWorker(AbstractWorkerAgent):
         self.ltm_dir.mkdir(parents=True, exist_ok=True)
         self.ltm_file = self.ltm_dir / "allocations.json"
         
-        # Initialize optimization engine
+        # Store fairness weight for use in allocation
         # fairness_weight=0.6 balances fairness (no zeros) with severity priority
-        self.optimizer = VolunteerAllocator(fairness_weight=fairness_weight)
+        self.fairness_weight = fairness_weight
         print(f"[{agent_id}] Initialized with optimization engine (fairness_weight={fairness_weight})")
 
     # ----------------------------------------------------------------------
@@ -43,7 +43,7 @@ class DisasterAllocationWorker(AbstractWorkerAgent):
         # Include fairness_weight in cache key so different fairness levels recompute
         cache_data = {
             **task_data,
-            "fairness_weight": self.optimizer.fairness_weight
+            "fairness_weight": self.fairness_weight
         }
         key = json.dumps(cache_data, sort_keys=True)
         cached_result = self.read_from_ltm(key)
@@ -56,8 +56,13 @@ class DisasterAllocationWorker(AbstractWorkerAgent):
         zones = task_data.get("zones", [])
         available_volunteers = task_data.get("available_volunteers", 0)
         
-        # Use optimization engine for allocation
-        optimization_result = self.optimizer.allocate(zones, available_volunteers)
+        # Use centralized run_allocation function (pure allocation logic, no messages/LTM)
+        allocation_plan, metadata = run_allocation(
+            zones=zones,
+            available_volunteers=available_volunteers,
+            fairness_weight=self.fairness_weight,
+            extra_constraints=None
+        )
         
         # Transform optimizer output to match expected format
         plan = [
@@ -66,19 +71,19 @@ class DisasterAllocationWorker(AbstractWorkerAgent):
                 "assigned_volunteers": alloc["allocated"],
                 "severity": next((z["severity"] for z in zones if z["id"] == alloc["zone_id"]), "N/A")
             }
-            for alloc in optimization_result["allocation_plan"]
+            for alloc in allocation_plan
         ]
 
         result = {
             "allocation_plan": plan,
-            "remaining_volunteers": optimization_result["remaining_volunteers"],
-            "timestamp": optimization_result["timestamp"],
+            "remaining_volunteers": metadata["remaining_volunteers"],
+            "timestamp": metadata["timestamp"],
             "optimization_metadata": {
-                "objective_value": optimization_result["objective_value"],
-                "solve_time_seconds": optimization_result["solve_time_seconds"],
-                "model_type": optimization_result["model_type"],
-                "fairness_weight": optimization_result["fairness_weight"],
-                "fairness_metrics": optimization_result["fairness_metrics"]
+                "objective_value": metadata["objective_value"],
+                "solve_time_seconds": metadata["solve_time_seconds"],
+                "model_type": metadata["model_type"],
+                "fairness_weight": metadata["fairness_weight"],
+                "fairness_metrics": metadata["fairness_metrics"]
             }
         }
 
