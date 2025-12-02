@@ -1,18 +1,25 @@
 # main.py
+import json
+import os
 from agents.supervisor.supervisor import SupervisorAgent
 
 if __name__ == "__main__":
     supervisor = SupervisorAgent()
 
-    zones = [
-        {"id": "Z1", "severity": 5, "required_volunteers": 8},
-        {"id": "Z2", "severity": 3, "required_volunteers": 6},
-        {"id": "Z3", "severity": 4, "required_volunteers": 5},
-    ]
+    # Load dataset with absolute path
+    script_dir = os.path.dirname(os.path.abspath(__file__))
+    dataset_path = os.path.join(script_dir, "datasets", "disaster_scenarios.json")
+    
+    with open(dataset_path, "r") as f:
+        data = json.load(f)
 
-    available_volunteers = 12
+    # Process first scenario
+    scenario = data["scenarios"][0]
+    zones = scenario["zones"]
+    available_volunteers = scenario["available_volunteers"]
 
     print("=== System Startup ===")
+    print(f"Scenario: {scenario['name']}")
     print(supervisor.health_check())
     supervisor.assign_task(zones, available_volunteers)
     print("=== End of Execution ===")

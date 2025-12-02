@@ -1,0 +1,193 @@
+{
+  "scenarios": [
+    {
+      "scenario_id": "scenario_001",
+      "name": "Urban Earthquake",
+      "description": "6.2 magnitude earthquake in metropolitan area with multiple collapsed structures",
+      "timestamp": "2025-12-02T10:00:00Z",
+      "duration_hours": 48,
+      "affected_population": 50000,
+      "casualty_estimate": 250,
+      "zones": [
+        {
+          "id": "Z1",
+          "name": "Downtown District",
+          "location": "Downtown",
+          "latitude": 40.7128,
+          "longitude": -74.0060,
+          "severity": 5,
+          "severity_description": "Critical",
+          "required_volunteers": 8,
+          "estimated_victims": 150,
+          "infrastructure_damage": "High - Multiple building collapses",
+          "hazards": ["Structural instability", "Gas leaks", "Electrical hazards"],
+          "resources_needed": ["Medical supplies", "Heavy machinery", "Search dogs"]
+        },
+        {
+          "id": "Z2",
+          "name": "Suburban Area",
+          "location": "Suburbs",
+          "latitude": 40.7580,
+          "longitude": -73.9855,
+          "severity": 3,
+          "severity_description": "Moderate",
+          "required_volunteers": 6,
+          "estimated_victims": 75,
+          "infrastructure_damage": "Moderate - Some building damage",
+          "hazards": ["Minor structural damage", "Downed power lines"],
+          "resources_needed": ["First aid kits", "Water", "Blankets"]
+        },
+        {
+          "id": "Z3",
+          "name": "Industrial Complex",
+          "location": "Industrial",
+          "latitude": 40.6892,
+          "longitude": -74.0445,
+          "severity": 4,
+          "severity_description": "High",
+          "required_volunteers": 5,
+          "estimated_victims": 25,
+          "infrastructure_damage": "High - Factory damage, chemical spillage",
+          "hazards": ["Chemical contamination", "Fire risk", "Toxic fumes"],
+          "resources_needed": ["Hazmat suits", "Respirators", "Spill containment"]
+        }
+      ],
+      "available_volunteers": 12,
+      "response_teams": [
+        {"team_id": "T1", "specialty": "Search and Rescue", "capacity": 4},
+        {"team_id": "T2", "specialty": "Medical Response", "capacity": 5},
+        {"team_id": "T3", "specialty": "Hazmat", "capacity": 3}
+      ]
+    },
+    {
+      "scenario_id": "scenario_002",
+      "name": "Flood Relief Operation",
+      "description": "Severe flooding from overflowing rivers affecting multiple districts",
+      "timestamp": "2025-12-02T14:30:00Z",
+      "duration_hours": 72,
+      "affected_population": 75000,
+      "casualty_estimate": 120,
+      "zones": [
+        {
+          "id": "Z1",
+          "name": "River Valley",
+          "location": "River Valley",
+          "latitude": 41.8781,
+          "longitude": -87.6298,
+          "severity": 4,
+          "severity_description": "High",
+          "required_volunteers": 10,
+          "estimated_victims": 200,
+          "infrastructure_damage": "Critical - Homes submerged",
+          "hazards": ["Fast-moving water", "Contamination", "Hypothermia risk"],
+          "resources_needed": ["Boats/rafts", "Life jackets", "Dry clothing"]
+        },
+        {
+          "id": "Z2",
+          "name": "Low-lying Residential",
+          "location": "Low-lying Areas",
+          "latitude": 41.8719,
+          "longitude": -87.6181,
+          "severity": 5,
+          "severity_description": "Critical",
+          "required_volunteers": 12,
+          "estimated_victims": 400,
+          "infrastructure_damage": "Severe - Multiple neighborhoods flooded",
+          "hazards": ["Deep water", "Debris", "Disease risk"],
+          "resources_needed": ["Amphibious vehicles", "Medical personnel", "Sanitizers"]
+        },
+        {
+          "id": "Z3",
+          "name": "Elevated Zone",
+          "location": "Elevated Zone",
+          "latitude": 41.9042,
+          "longitude": -87.7074,
+          "severity": 2,
+          "severity_description": "Low",
+          "required_volunteers": 4,
+          "estimated_victims": 30,
+          "infrastructure_damage": "Minor - Isolated flooding",
+          "hazards": ["Mudslides potential"],
+          "resources_needed": ["Pumps", "Sandbags"]
+        }
+      ],
+      "available_volunteers": 20,
+      "response_teams": [
+        {"team_id": "T1", "specialty": "Water Rescue", "capacity": 8},
+        {"team_id": "T2", "specialty": "Medical Support", "capacity": 7},
+        {"team_id": "T3", "specialty": "Logistics", "capacity": 5}
+      ]
+    },
+    {
+      "scenario_id": "scenario_003",
+      "name": "Wildfire Response",
+      "description": "Large-scale wildfire spreading rapidly through forested regions",
+      "timestamp": "2025-12-02T18:45:00Z",
+      "duration_hours": 96,
+      "affected_population": 100000,
+      "casualty_estimate": 50,
+      "zones": [
+        {
+          "id": "Z1",
+          "name": "Forest Northern Sector",
+          "location": "Forest North",
+          "latitude": 38.2975,
+          "longitude": -122.2869,
+          "severity": 5,
+          "severity_description": "Critical",
+          "required_volunteers": 15,
+          "estimated_victims": 100,
+          "infrastructure_damage": "Severe - Homes destroyed, power lines down",
+          "hazards": ["Active fire", "Smoke inhalation", "Heat exposure"],
+          "resources_needed": ["Fire suppression equipment", "Evacuation transport", "Respiratory protection"]
+        },
+        {
+          "id": "Z2",
+          "name": "Forest Southern Sector",
+          "location": "Forest South",
+          "latitude": 38.1975,
+          "longitude": -122.1869,
+          "severity": 4,
+          "severity_description": "High",
+          "required_volunteers": 10,
+          "estimated_victims": 80,
+          "infrastructure_damage": "High - Multiple structures threatened",
+          "hazards": ["Spreading embers", "Reduced visibility", "Temperature extremes"],
+          "resources_needed": ["Water tankers", "Evacuation routes", "Communication devices"]
+        },
+        {
+          "id": "Z3",
+          "name": "Perimeter Defense Zone",
+          "location": "Perimeter",
+          "latitude": 38.2475,
+          "longitude": -122.2369,
+          "severity": 3,
+          "severity_description": "Moderate",
+          "required_volunteers": 7,
+          "estimated_victims": 30,
+          "infrastructure_damage": "Moderate - Defensive perimeter needed",
+          "hazards": ["Air quality degradation", "Ash fall"],
+          "resources_needed": ["Air purifiers", "Firefighting supplies"]
+        }
+      ],
+      "available_volunteers": 25,
+      "response_teams": [
+        {"team_id": "T1", "specialty": "Firefighting", "capacity": 12},
+        {"team_id": "T2", "specialty": "Evacuation Coordination", "capacity": 8},
+        {"team_id": "T3", "specialty": "Medical Emergency", "capacity": 5}
+      ]
+    }
+  ],
+  "metadata": {
+    "version": "1.0",
+    "created": "2025-12-02",
+    "total_scenarios": 3,
+    "severity_levels": {
+      "1": "Minimal",
+      "2": "Low",
+      "3": "Moderate",
+      "4": "High",
+      "5": "Critical"
+    }
+  }
+}
