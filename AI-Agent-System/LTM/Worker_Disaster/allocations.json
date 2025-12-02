@@ -20,7 +20,11 @@
     "remaining_volunteers": 0,
     "timestamp": "2025-11-12T18:32:03.103000"
   },
+<<<<<<< HEAD
   "{\"available_volunteers\": 12, \"zones\": [{\"estimated_victims\": 150, \"hazards\": [\"Structural instability\", \"Gas leaks\", \"Electrical hazards\"], \"id\": \"Z1\", \"infrastructure_damage\": \"High - Multiple building collapses\", \"latitude\": 40.7128, \"location\": \"Downtown\", \"longitude\": -74.006, \"name\": \"Downtown District\", \"required_volunteers\": 8, \"resources_needed\": [\"Medical supplies\", \"Heavy machinery\", \"Search dogs\"], \"severity\": 5, \"severity_description\": \"Critical\"}, {\"estimated_victims\": 75, \"hazards\": [\"Minor structural damage\", \"Downed power lines\"], \"id\": \"Z2\", \"infrastructure_damage\": \"Moderate - Some building damage\", \"latitude\": 40.758, \"location\": \"Suburbs\", \"longitude\": -73.9855, \"name\": \"Suburban Area\", \"required_volunteers\": 6, \"resources_needed\": [\"First aid kits\", \"Water\", \"Blankets\"], \"severity\": 3, \"severity_description\": \"Moderate\"}, {\"estimated_victims\": 25, \"hazards\": [\"Chemical contamination\", \"Fire risk\", \"Toxic fumes\"], \"id\": \"Z3\", \"infrastructure_damage\": \"High - Factory damage, chemical spillage\", \"latitude\": 40.6892, \"location\": \"Industrial\", \"longitude\": -74.0445, \"name\": \"Industrial Complex\", \"required_volunteers\": 5, \"resources_needed\": [\"Hazmat suits\", \"Respirators\", \"Spill containment\"], \"severity\": 4, \"severity_description\": \"High\"}]}": {
+=======
+  "{\"available_volunteers\": 15, \"zones\": [{\"id\": \"Z1\", \"required_volunteers\": 8, \"severity\": 5}, {\"id\": \"Z2\", \"required_volunteers\": 6, \"severity\": 3}, {\"id\": \"Z3\", \"required_volunteers\": 5, \"severity\": 4}]}": {
+>>>>>>> eb60f8bbc87e5d24faaa317e25dcc14086fd335d
     "allocation_plan": [
       {
         "zone_id": "Z1",
@@ -29,16 +33,28 @@
       },
       {
         "zone_id": "Z2",
+<<<<<<< HEAD
         "assigned_volunteers": 4,
+=======
+        "assigned_volunteers": 6,
+>>>>>>> eb60f8bbc87e5d24faaa317e25dcc14086fd335d
         "severity": 3
       },
       {
         "zone_id": "Z3",
+<<<<<<< HEAD
         "assigned_volunteers": 0,
+=======
+        "assigned_volunteers": 1,
+>>>>>>> eb60f8bbc87e5d24faaa317e25dcc14086fd335d
         "severity": 4
       }
     ],
     "remaining_volunteers": 0,
+<<<<<<< HEAD
     "timestamp": "2025-12-02T16:15:32.570934"
+=======
+    "timestamp": "2025-11-13T23:19:57.273451"
+>>>>>>> eb60f8bbc87e5d24faaa317e25dcc14086fd335d
   }
 }
