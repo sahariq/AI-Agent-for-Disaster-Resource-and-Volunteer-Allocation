@@ -1,0 +1,302 @@
+{
+	"info": {
+		"_postman_id": "disaster-allocation-api",
+		"name": "Disaster Allocation Worker API",
+		"description": "API endpoints for the Disaster Resource and Volunteer Allocation System",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Root",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8000/",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8000",
+					"path": [
+						""
+					]
+				},
+				"description": "Basic API information endpoint"
+			},
+			"response": []
+		},
+		{
+			"name": "Health Check",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8000/health",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8000",
+					"path": [
+						"health"
+					]
+				},
+				"description": "Health check endpoint for supervisor"
+			},
+			"response": []
+		},
+		{
+			"name": "Invoke",
+			"item": [
+				{
+					"name": "Basic Example",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"message_id\": \"a4b8c9d0-1e2f-3g4h-5i6j-7k8l9test\",\n    \"sender\": \"Supervisor_Main\",\n    \"recipient\": \"Worker_Disaster\",\n    \"type\": \"task_assignment\",\n    \"task\": {\n        \"name\": \"allocate_resources\",\n        \"priority\": 1,\n        \"parameters\": {\n            \"zones\": [\n                {\n                    \"id\": \"Z1\",\n                    \"severity\": 5,\n                    \"required_volunteers\": 8,\n                    \"capacity\": 8,\n                    \"resources_available\": 50,\n                    \"min_resources_per_volunteer\": 4\n                },\n                {\n                    \"id\": \"Z2\",\n                    \"severity\": 3,\n                    \"required_volunteers\": 4,\n                    \"capacity\": 6,\n                    \"resources_available\": 30,\n                    \"min_resources_per_volunteer\": 3\n                }\n            ],\n            \"available_volunteers\": 10,\n            \"constraints\": {\n                \"fairness_weight\": 0.6\n            }\n        }\n    },\n    \"timestamp\": \"2025-11-27T12:00:00Z\"\n}"
+						},
+						"url": {
+							"raw": "http://localhost:8000/invoke",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8000",
+							"path": [
+								"invoke"
+							]
+						},
+						"description": "Basic task assignment example with 2 zones and 10 volunteers"
+					},
+					"response": []
+				},
+				{
+					"name": "Islamabad Earthquake",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"message_id\": \"msg-001-islamabad-earthquake\",\n    \"sender\": \"Supervisor_Main\",\n    \"recipient\": \"Worker_Disaster\",\n    \"type\": \"task_assignment\",\n    \"task\": {\n        \"name\": \"allocate_resources\",\n        \"priority\": 1,\n        \"parameters\": {\n            \"zones\": [\n                {\n                    \"id\": \"Z1\",\n                    \"severity\": 8,\n                    \"required_volunteers\": 20,\n                    \"capacity\": 25,\n                    \"resources_available\": 120,\n                    \"min_resources_per_volunteer\": 3.5\n                },\n                {\n                    \"id\": \"Z2\",\n                    \"severity\": 6,\n                    \"required_volunteers\": 15,\n                    \"capacity\": 18,\n                    \"resources_available\": 80,\n                    \"min_resources_per_volunteer\": 4.0\n                }\n            ],\n            \"available_volunteers\": 40,\n            \"constraints\": {\n                \"fairness_weight\": 0.6,\n                \"scenario_id\": \"SCENARIO_PK_001\"\n            }\n        }\n    },\n    \"timestamp\": \"2025-11-27T12:00:00Z\"\n}"
+						},
+						"url": {
+							"raw": "http://localhost:8000/invoke",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8000",
+							"path": [
+								"invoke"
+							]
+						},
+						"description": "Realistic scenario: Islamabad Urban Earthquake with high severity zones"
+					},
+					"response": []
+				},
+				{
+					"name": "Karachi Port Industrial",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"message_id\": \"msg-002-karachi-industrial\",\n    \"sender\": \"Supervisor_Main\",\n    \"recipient\": \"Worker_Disaster\",\n    \"type\": \"task_assignment\",\n    \"task\": {\n        \"name\": \"allocate_resources\",\n        \"priority\": 1,\n        \"parameters\": {\n            \"zones\": [\n                {\n                    \"id\": \"Z1\",\n                    \"severity\": 7,\n                    \"required_volunteers\": 18,\n                    \"capacity\": 20,\n                    \"resources_available\": 90,\n                    \"min_resources_per_volunteer\": 3.5\n                },\n                {\n                    \"id\": \"Z2\",\n                    \"severity\": 6,\n                    \"required_volunteers\": 12,\n                    \"capacity\": 15,\n                    \"resources_available\": 70,\n                    \"min_resources_per_volunteer\": 2.5\n                }\n            ],\n            \"available_volunteers\": 30,\n            \"constraints\": {\n                \"fairness_weight\": 0.7,\n                \"scenario_id\": \"SCENARIO_PK_002\"\n            }\n        }\n    },\n    \"timestamp\": \"2025-11-27T12:00:00Z\"\n}"
+						},
+						"url": {
+							"raw": "http://localhost:8000/invoke",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8000",
+							"path": [
+								"invoke"
+							]
+						},
+						"description": "Karachi Port Industrial Accident scenario"
+					},
+					"response": []
+				},
+				{
+					"name": "Quetta Extreme Earthquake",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"message_id\": \"msg-003-quetta-extreme\",\n    \"sender\": \"Supervisor_Main\",\n    \"recipient\": \"Worker_Disaster\",\n    \"type\": \"task_assignment\",\n    \"task\": {\n        \"name\": \"allocate_resources\",\n        \"priority\": 1,\n        \"parameters\": {\n            \"zones\": [\n                {\n                    \"id\": \"Z1\",\n                    \"severity\": 9,\n                    \"required_volunteers\": 22,\n                    \"capacity\": 25,\n                    \"resources_available\": 140,\n                    \"min_resources_per_volunteer\": 3.5\n                },\n                {\n                    \"id\": \"Z2\",\n                    \"severity\": 7,\n                    \"required_volunteers\": 16,\n                    \"capacity\": 20,\n                    \"resources_available\": 100,\n                    \"min_resources_per_volunteer\": 4.0\n                }\n            ],\n            \"available_volunteers\": 30,\n            \"constraints\": {\n                \"fairness_weight\": 0.5,\n                \"scenario_id\": \"SCENARIO_PK_007\",\n                \"prioritize_high_severity\": true\n            }\n        }\n    },\n    \"timestamp\": \"2025-11-27T12:00:00Z\"\n}"
+						},
+						"url": {
+							"raw": "http://localhost:8000/invoke",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8000",
+							"path": [
+								"invoke"
+							]
+						},
+						"description": "Extreme severity scenario: Quetta Earthquake with severity 9"
+					},
+					"response": []
+				},
+				{
+					"name": "Three Zones Example",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"message_id\": \"msg-004-three-zones\",\n    \"sender\": \"Supervisor_Main\",\n    \"recipient\": \"Worker_Disaster\",\n    \"type\": \"task_assignment\",\n    \"task\": {\n        \"name\": \"allocate_resources\",\n        \"priority\": 1,\n        \"parameters\": {\n            \"zones\": [\n                {\n                    \"id\": \"Z1\",\n                    \"severity\": 8,\n                    \"required_volunteers\": 20,\n                    \"capacity\": 25,\n                    \"resources_available\": 120,\n                    \"min_resources_per_volunteer\": 3.5\n                },\n                {\n                    \"id\": \"Z2\",\n                    \"severity\": 6,\n                    \"required_volunteers\": 15,\n                    \"capacity\": 18,\n                    \"resources_available\": 80,\n                    \"min_resources_per_volunteer\": 4.0\n                },\n                {\n                    \"id\": \"Z3\",\n                    \"severity\": 4,\n                    \"required_volunteers\": 10,\n                    \"capacity\": 12,\n                    \"resources_available\": 60,\n                    \"min_resources_per_volunteer\": 3.0\n                }\n            ],\n            \"available_volunteers\": 35,\n            \"constraints\": {\n                \"fairness_weight\": 0.6,\n                \"scenario_id\": \"SCENARIO_MULTI_ZONE\"\n            }\n        }\n    },\n    \"timestamp\": \"2025-11-27T12:00:00Z\"\n}"
+						},
+						"url": {
+							"raw": "http://localhost:8000/invoke",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8000",
+							"path": [
+								"invoke"
+							]
+						},
+						"description": "Example with three zones to test multi-zone allocation"
+					},
+					"response": []
+				}
+			],
+			"description": "Task assignment endpoint - accepts supervisor messages and returns completion reports"
+		},
+		{
+			"name": "Query",
+			"item": [
+				{
+					"name": "Basic Query",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"query\": \"Prioritize high-severity zones and distribute volunteers fairly.\",\n    \"zones\": [\n        {\n            \"id\": \"Z1\",\n            \"severity\": 5,\n            \"required_volunteers\": 8,\n            \"capacity\": 8,\n            \"resources_available\": 50,\n            \"min_resources_per_volunteer\": 4\n        },\n        {\n            \"id\": \"Z2\",\n            \"severity\": 3,\n            \"required_volunteers\": 4,\n            \"capacity\": 6,\n            \"resources_available\": 30,\n            \"min_resources_per_volunteer\": 3\n        }\n    ],\n    \"available_volunteers\": 10,\n    \"constraints\": {\n        \"fairness_weight\": 0.6\n    }\n}"
+						},
+						"url": {
+							"raw": "http://localhost:8000/query",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8000",
+							"path": [
+								"query"
+							]
+						},
+						"description": "Natural language query with basic parameters"
+					},
+					"response": []
+				},
+				{
+					"name": "Fairness Focus Query",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"query\": \"Distribute volunteers as fairly as possible across all zones.\",\n    \"zones\": [\n        {\n            \"id\": \"Z1\",\n            \"severity\": 8,\n            \"required_volunteers\": 20,\n            \"capacity\": 25,\n            \"resources_available\": 120,\n            \"min_resources_per_volunteer\": 3.5\n        },\n        {\n            \"id\": \"Z2\",\n            \"severity\": 6,\n            \"required_volunteers\": 15,\n            \"capacity\": 18,\n            \"resources_available\": 80,\n            \"min_resources_per_volunteer\": 4.0\n        },\n        {\n            \"id\": \"Z3\",\n            \"severity\": 4,\n            \"required_volunteers\": 10,\n            \"capacity\": 12,\n            \"resources_available\": 60,\n            \"min_resources_per_volunteer\": 3.0\n        }\n    ],\n    \"available_volunteers\": 30,\n    \"constraints\": {\n        \"fairness_weight\": 0.8\n    }\n}"
+						},
+						"url": {
+							"raw": "http://localhost:8000/query",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8000",
+							"path": [
+								"query"
+							]
+						},
+						"description": "Query emphasizing fairness with high fairness_weight"
+					},
+					"response": []
+				},
+				{
+					"name": "Efficiency Focus Query",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"query\": \"Maximize efficiency by allocating volunteers to zones with highest severity first.\",\n    \"zones\": [\n        {\n            \"id\": \"Z1\",\n            \"severity\": 9,\n            \"required_volunteers\": 22,\n            \"capacity\": 25,\n            \"resources_available\": 140,\n            \"min_resources_per_volunteer\": 3.5\n        },\n        {\n            \"id\": \"Z2\",\n            \"severity\": 7,\n            \"required_volunteers\": 16,\n            \"capacity\": 20,\n            \"resources_available\": 100,\n            \"min_resources_per_volunteer\": 4.0\n        },\n        {\n            \"id\": \"Z3\",\n            \"severity\": 5,\n            \"required_volunteers\": 12,\n            \"capacity\": 15,\n            \"resources_available\": 70,\n            \"min_resources_per_volunteer\": 3.5\n        }\n    ],\n    \"available_volunteers\": 35,\n    \"constraints\": {\n        \"fairness_weight\": 0.3\n    }\n}"
+						},
+						"url": {
+							"raw": "http://localhost:8000/query",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8000",
+							"path": [
+								"query"
+							]
+						},
+						"description": "Query emphasizing efficiency with low fairness_weight"
+					},
+					"response": []
+				}
+			],
+			"description": "Natural-language friendly wrapper around the allocation engine"
+		}
+	],
+	"variable": [
+		{
+			"key": "base_url",
+			"value": "http://localhost:8000",
+			"type": "string"
+		}
+	]
+}
+

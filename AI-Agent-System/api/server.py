@@ -12,6 +12,7 @@ import sys
 import uuid
 from pathlib import Path
 from flask import Flask, request, jsonify
+from flask_cors import CORS
 
 # Add parent directory to path for config imports
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
@@ -20,6 +21,7 @@ from optimization.volunteer_allocator import run_allocation
 from shared.utils import get_utc_timestamp
 
 app = Flask(__name__)
+CORS(app)  # Enable CORS for browser requests
 
 # Agent ID from config
 AGENT_ID = "Worker_Disaster"
@@ -54,6 +56,26 @@ def root():
         "message": "Disaster Allocation Worker API",
         "status": "UP"
     })
+
+
+@app.route("/test", methods=["GET"])
+def test_page():
+    """Serve the browser test page."""
+    # Look for api_test.html in project root (parent of AI-Agent-System)
+    test_file_path = Path(__file__).parent.parent.parent / "api_test.html"
+    if test_file_path.exists():
+        with open(test_file_path, 'r', encoding='utf-8') as f:
+            return f.read(), 200, {'Content-Type': 'text/html'}
+    else:
+        # Fallback: return a simple message
+        return jsonify({
+            "message": "Test page not found. Please ensure api_test.html is in the project root.",
+            "endpoints": {
+                "health": "/health",
+                "invoke": "/invoke (POST)",
+                "query": "/query (POST)"
+            }
+        }), 404
 
 
 @app.route("/health", methods=["GET"])

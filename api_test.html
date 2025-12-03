@@ -1,0 +1,705 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>API Endpoint Tester</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 10px;
+            padding: 30px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+
+        h1 {
+            color: #667eea;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .search-box {
+            width: 100%;
+            padding: 15px;
+            border: 2px solid #ddd;
+            border-radius: 5px;
+            font-size: 16px;
+            margin-bottom: 20px;
+        }
+
+        .search-box:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .endpoint-list {
+            margin-bottom: 20px;
+        }
+
+        .endpoint-item {
+            padding: 15px;
+            margin-bottom: 10px;
+            background: #f5f5f5;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background 0.3s;
+            border-left: 4px solid transparent;
+        }
+
+        .endpoint-item:hover {
+            background: #e8e8e8;
+            border-left-color: #667eea;
+        }
+
+        .endpoint-item.hidden {
+            display: none;
+        }
+
+        .method {
+            display: inline-block;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-weight: bold;
+            margin-right: 10px;
+            font-size: 12px;
+        }
+
+        .method.get {
+            background: #4CAF50;
+            color: white;
+        }
+
+        .method.post {
+            background: #2196F3;
+            color: white;
+        }
+
+        .endpoint-name {
+            font-weight: bold;
+            color: #333;
+            margin-right: 10px;
+        }
+
+        .endpoint-path {
+            color: #666;
+            font-family: 'Courier New', monospace;
+            font-size: 14px;
+        }
+
+        .endpoint-details {
+            display: none;
+            margin-top: 20px;
+            padding: 20px;
+            background: #f9f9f9;
+            border-radius: 5px;
+            border: 1px solid #ddd;
+        }
+
+        .endpoint-details.active {
+            display: block;
+        }
+
+        .endpoint-details h3 {
+            color: #667eea;
+            margin-bottom: 15px;
+        }
+
+        textarea {
+            width: 100%;
+            min-height: 200px;
+            padding: 12px;
+            border: 2px solid #ddd;
+            border-radius: 5px;
+            font-family: 'Courier New', monospace;
+            font-size: 13px;
+            resize: vertical;
+            margin-bottom: 15px;
+        }
+
+        textarea:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        button {
+            background: #667eea;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: bold;
+            margin-right: 10px;
+            margin-bottom: 10px;
+            transition: background 0.3s;
+        }
+
+        button:hover {
+            background: #5568d3;
+        }
+
+        .example-btn {
+            background: #764ba2;
+            font-size: 14px;
+            padding: 8px 16px;
+        }
+
+        .example-btn:hover {
+            background: #5d3a7e;
+        }
+
+        .response {
+            margin-top: 20px;
+            padding: 15px;
+            border-radius: 5px;
+            background: #f9f9f9;
+            border-left: 4px solid #667eea;
+        }
+
+        .response h4 {
+            color: #667eea;
+            margin-bottom: 10px;
+        }
+
+        .response pre {
+            background: #2d2d2d;
+            color: #f8f8f2;
+            padding: 15px;
+            border-radius: 5px;
+            overflow-x: auto;
+            font-size: 12px;
+            line-height: 1.5;
+        }
+
+        .status-success {
+            border-left-color: #4CAF50;
+        }
+
+        .status-error {
+            border-left-color: #f44336;
+        }
+
+        .status-info {
+            border-left-color: #2196F3;
+        }
+
+        .no-results {
+            text-align: center;
+            color: #999;
+            padding: 40px;
+            display: none;
+        }
+
+        .no-results.show {
+            display: block;
+        }
+
+        .base-url {
+            margin-bottom: 15px;
+            padding: 10px;
+            background: #e8f4f8;
+            border-radius: 5px;
+        }
+
+        .base-url label {
+            font-weight: bold;
+            margin-right: 10px;
+        }
+
+        .base-url input {
+            width: 300px;
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-family: 'Courier New', monospace;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔍 API Endpoint Tester</h1>
+        
+        <div class="base-url">
+            <label>Base URL:</label>
+            <input type="text" id="base-url" value="http://localhost:8000" onchange="updateUrls()">
+        </div>
+
+        <input type="text" class="search-box" id="search-box" placeholder="Search endpoints (e.g., 'health', 'invoke', 'query', 'root')..." onkeyup="filterEndpoints()">
+
+        <div class="endpoint-list" id="endpoint-list">
+            <div class="endpoint-item" data-endpoint="root" onclick="showEndpoint('root')">
+                <span class="method get">GET</span>
+                <span class="endpoint-name">Root</span>
+                <span class="endpoint-path" id="root-path">/</span>
+            </div>
+            <div class="endpoint-item" data-endpoint="health" onclick="showEndpoint('health')">
+                <span class="method get">GET</span>
+                <span class="endpoint-name">Health Check</span>
+                <span class="endpoint-path" id="health-path">/health</span>
+            </div>
+            <div class="endpoint-item" data-endpoint="invoke" onclick="showEndpoint('invoke')">
+                <span class="method post">POST</span>
+                <span class="endpoint-name">Invoke</span>
+                <span class="endpoint-path" id="invoke-path">/invoke</span>
+            </div>
+            <div class="endpoint-item" data-endpoint="query" onclick="showEndpoint('query')">
+                <span class="method post">POST</span>
+                <span class="endpoint-name">Query</span>
+                <span class="endpoint-path" id="query-path">/query</span>
+            </div>
+        </div>
+
+        <div class="no-results" id="no-results">
+            No endpoints found matching your search.
+        </div>
+
+        <!-- Root Endpoint Details -->
+        <div class="endpoint-details" id="root-details">
+            <h3>Root Endpoint</h3>
+            <p><strong>Method:</strong> GET</p>
+            <p><strong>Description:</strong> Basic API information</p>
+            <button onclick="testEndpoint('root')">Test Endpoint</button>
+            <div id="root-response"></div>
+        </div>
+
+        <!-- Health Check Details -->
+        <div class="endpoint-details" id="health-details">
+            <h3>Health Check</h3>
+            <p><strong>Method:</strong> GET</p>
+            <p><strong>Description:</strong> Health check endpoint for supervisor</p>
+            <button onclick="testEndpoint('health')">Test Endpoint</button>
+            <div id="health-response"></div>
+        </div>
+
+        <!-- Invoke Details -->
+        <div class="endpoint-details" id="invoke-details">
+            <h3>Invoke (Task Assignment)</h3>
+            <p><strong>Method:</strong> POST</p>
+            <p><strong>Description:</strong> Accepts a task assignment message and returns a completion report</p>
+            <div style="margin: 15px 0;">
+                <strong>Quick Examples:</strong><br>
+                <button class="example-btn" onclick="loadExample('basic')">Basic</button>
+                <button class="example-btn" onclick="loadExample('islamabad')">Islamabad</button>
+                <button class="example-btn" onclick="loadExample('karachi')">Karachi</button>
+                <button class="example-btn" onclick="loadExample('quetta')">Quetta</button>
+            </div>
+            <textarea id="invoke-body" placeholder="Enter JSON request body..."></textarea>
+            <button onclick="testEndpoint('invoke')">Test Endpoint</button>
+            <div id="invoke-response"></div>
+        </div>
+
+        <!-- Query Details -->
+        <div class="endpoint-details" id="query-details">
+            <h3>Query (Natural Language)</h3>
+            <p><strong>Method:</strong> POST</p>
+            <p><strong>Description:</strong> Natural-language friendly wrapper around the allocation engine</p>
+            <div style="margin: 15px 0;">
+                <strong>Quick Examples:</strong><br>
+                <button class="example-btn" onclick="loadQueryExample('basic')">Basic</button>
+                <button class="example-btn" onclick="loadQueryExample('fairness')">Fairness</button>
+                <button class="example-btn" onclick="loadQueryExample('efficiency')">Efficiency</button>
+            </div>
+            <textarea id="query-body" placeholder="Enter JSON request body..."></textarea>
+            <button onclick="testEndpoint('query')">Test Endpoint</button>
+            <div id="query-response"></div>
+        </div>
+    </div>
+
+    <script>
+        let BASE_URL = 'http://localhost:8000';
+        let currentEndpoint = null;
+
+        const examples = {
+            basic: {
+                message_id: "a4b8c9d0-1e2f-3g4h-5i6j-7k8l9test",
+                sender: "Supervisor_Main",
+                recipient: "Worker_Disaster",
+                type: "task_assignment",
+                task: {
+                    name: "allocate_resources",
+                    priority: 1,
+                    parameters: {
+                        zones: [
+                            {
+                                id: "Z1",
+                                severity: 5,
+                                required_volunteers: 8,
+                                capacity: 8,
+                                resources_available: 50,
+                                min_resources_per_volunteer: 4
+                            },
+                            {
+                                id: "Z2",
+                                severity: 3,
+                                required_volunteers: 4,
+                                capacity: 6,
+                                resources_available: 30,
+                                min_resources_per_volunteer: 3
+                            }
+                        ],
+                        available_volunteers: 10,
+                        constraints: {
+                            fairness_weight: 0.6
+                        }
+                    }
+                },
+                timestamp: new Date().toISOString()
+            },
+            islamabad: {
+                message_id: "msg-001-islamabad-earthquake",
+                sender: "Supervisor_Main",
+                recipient: "Worker_Disaster",
+                type: "task_assignment",
+                task: {
+                    name: "allocate_resources",
+                    priority: 1,
+                    parameters: {
+                        zones: [
+                            {
+                                id: "Z1",
+                                severity: 8,
+                                required_volunteers: 20,
+                                capacity: 25,
+                                resources_available: 120,
+                                min_resources_per_volunteer: 3.5
+                            },
+                            {
+                                id: "Z2",
+                                severity: 6,
+                                required_volunteers: 15,
+                                capacity: 18,
+                                resources_available: 80,
+                                min_resources_per_volunteer: 4.0
+                            }
+                        ],
+                        available_volunteers: 40,
+                        constraints: {
+                            fairness_weight: 0.6,
+                            scenario_id: "SCENARIO_PK_001"
+                        }
+                    }
+                },
+                timestamp: new Date().toISOString()
+            },
+            karachi: {
+                message_id: "msg-002-karachi-industrial",
+                sender: "Supervisor_Main",
+                recipient: "Worker_Disaster",
+                type: "task_assignment",
+                task: {
+                    name: "allocate_resources",
+                    priority: 1,
+                    parameters: {
+                        zones: [
+                            {
+                                id: "Z1",
+                                severity: 7,
+                                required_volunteers: 18,
+                                capacity: 20,
+                                resources_available: 90,
+                                min_resources_per_volunteer: 3.5
+                            },
+                            {
+                                id: "Z2",
+                                severity: 6,
+                                required_volunteers: 12,
+                                capacity: 15,
+                                resources_available: 70,
+                                min_resources_per_volunteer: 2.5
+                            }
+                        ],
+                        available_volunteers: 30,
+                        constraints: {
+                            fairness_weight: 0.7,
+                            scenario_id: "SCENARIO_PK_002"
+                        }
+                    }
+                },
+                timestamp: new Date().toISOString()
+            },
+            quetta: {
+                message_id: "msg-003-quetta-extreme",
+                sender: "Supervisor_Main",
+                recipient: "Worker_Disaster",
+                type: "task_assignment",
+                task: {
+                    name: "allocate_resources",
+                    priority: 1,
+                    parameters: {
+                        zones: [
+                            {
+                                id: "Z1",
+                                severity: 9,
+                                required_volunteers: 22,
+                                capacity: 25,
+                                resources_available: 140,
+                                min_resources_per_volunteer: 3.5
+                            },
+                            {
+                                id: "Z2",
+                                severity: 7,
+                                required_volunteers: 16,
+                                capacity: 20,
+                                resources_available: 100,
+                                min_resources_per_volunteer: 4.0
+                            }
+                        ],
+                        available_volunteers: 30,
+                        constraints: {
+                            fairness_weight: 0.5,
+                            scenario_id: "SCENARIO_PK_007",
+                            prioritize_high_severity: true
+                        }
+                    }
+                },
+                timestamp: new Date().toISOString()
+            }
+        };
+
+        const queryExamples = {
+            basic: {
+                query: "Prioritize high-severity zones and distribute volunteers fairly.",
+                zones: [
+                    {
+                        id: "Z1",
+                        severity: 5,
+                        required_volunteers: 8,
+                        capacity: 8,
+                        resources_available: 50,
+                        min_resources_per_volunteer: 4
+                    },
+                    {
+                        id: "Z2",
+                        severity: 3,
+                        required_volunteers: 4,
+                        capacity: 6,
+                        resources_available: 30,
+                        min_resources_per_volunteer: 3
+                    }
+                ],
+                available_volunteers: 10,
+                constraints: {
+                    fairness_weight: 0.6
+                }
+            },
+            fairness: {
+                query: "Distribute volunteers as fairly as possible across all zones.",
+                zones: [
+                    {
+                        id: "Z1",
+                        severity: 8,
+                        required_volunteers: 20,
+                        capacity: 25,
+                        resources_available: 120,
+                        min_resources_per_volunteer: 3.5
+                    },
+                    {
+                        id: "Z2",
+                        severity: 6,
+                        required_volunteers: 15,
+                        capacity: 18,
+                        resources_available: 80,
+                        min_resources_per_volunteer: 4.0
+                    },
+                    {
+                        id: "Z3",
+                        severity: 4,
+                        required_volunteers: 10,
+                        capacity: 12,
+                        resources_available: 60,
+                        min_resources_per_volunteer: 3.0
+                    }
+                ],
+                available_volunteers: 30,
+                constraints: {
+                    fairness_weight: 0.8
+                }
+            },
+            efficiency: {
+                query: "Maximize efficiency by allocating volunteers to zones with highest severity first.",
+                zones: [
+                    {
+                        id: "Z1",
+                        severity: 9,
+                        required_volunteers: 22,
+                        capacity: 25,
+                        resources_available: 140,
+                        min_resources_per_volunteer: 3.5
+                    },
+                    {
+                        id: "Z2",
+                        severity: 7,
+                        required_volunteers: 16,
+                        capacity: 20,
+                        resources_available: 100,
+                        min_resources_per_volunteer: 4.0
+                    },
+                    {
+                        id: "Z3",
+                        severity: 5,
+                        required_volunteers: 12,
+                        capacity: 15,
+                        resources_available: 70,
+                        min_resources_per_volunteer: 3.5
+                    }
+                ],
+                available_volunteers: 35,
+                constraints: {
+                    fairness_weight: 0.3
+                }
+            }
+        };
+
+        function updateUrls() {
+            BASE_URL = document.getElementById('base-url').value;
+            document.getElementById('root-path').textContent = BASE_URL + '/';
+            document.getElementById('health-path').textContent = BASE_URL + '/health';
+            document.getElementById('invoke-path').textContent = BASE_URL + '/invoke';
+            document.getElementById('query-path').textContent = BASE_URL + '/query';
+        }
+
+        function filterEndpoints() {
+            const searchTerm = document.getElementById('search-box').value.toLowerCase();
+            const items = document.querySelectorAll('.endpoint-item');
+            let visibleCount = 0;
+
+            items.forEach(item => {
+                const text = item.textContent.toLowerCase();
+                if (text.includes(searchTerm)) {
+                    item.classList.remove('hidden');
+                    visibleCount++;
+                } else {
+                    item.classList.add('hidden');
+                }
+            });
+
+            document.getElementById('no-results').classList.toggle('show', visibleCount === 0);
+        }
+
+        function showEndpoint(endpoint) {
+            // Hide all details
+            document.querySelectorAll('.endpoint-details').forEach(detail => {
+                detail.classList.remove('active');
+            });
+
+            // Show selected endpoint details
+            document.getElementById(endpoint + '-details').classList.add('active');
+            currentEndpoint = endpoint;
+
+            // Load default example if POST endpoint
+            if (endpoint === 'invoke' && !document.getElementById('invoke-body').value) {
+                loadExample('basic');
+            }
+            if (endpoint === 'query' && !document.getElementById('query-body').value) {
+                loadQueryExample('basic');
+            }
+        }
+
+        function loadExample(name) {
+            document.getElementById('invoke-body').value = JSON.stringify(examples[name], null, 2);
+        }
+
+        function loadQueryExample(name) {
+            document.getElementById('query-body').value = JSON.stringify(queryExamples[name], null, 2);
+        }
+
+        function displayResponse(elementId, data, status, isError = false) {
+            const responseDiv = document.getElementById(elementId);
+            const statusClass = isError ? 'status-error' : (status >= 200 && status < 300 ? 'status-success' : 'status-info');
+            
+            responseDiv.innerHTML = `
+                <div class="response ${statusClass}">
+                    <h4>Response (Status: ${status})</h4>
+                    <pre>${JSON.stringify(data, null, 2)}</pre>
+                </div>
+            `;
+        }
+
+        async function testEndpoint(endpoint) {
+            if (endpoint === 'root') {
+                try {
+                    const response = await fetch(`${BASE_URL}/`);
+                    const data = await response.json();
+                    displayResponse('root-response', data, response.status);
+                } catch (error) {
+                    displayResponse('root-response', { error: error.message }, 0, true);
+                }
+            } else if (endpoint === 'health') {
+                try {
+                    const response = await fetch(`${BASE_URL}/health`);
+                    const data = await response.json();
+                    displayResponse('health-response', data, response.status);
+                } catch (error) {
+                    displayResponse('health-response', { error: error.message }, 0, true);
+                }
+            } else if (endpoint === 'invoke') {
+                const bodyText = document.getElementById('invoke-body').value;
+                if (!bodyText.trim()) {
+                    displayResponse('invoke-response', { error: 'Please enter a JSON request body' }, 400, true);
+                    return;
+                }
+
+                try {
+                    const body = JSON.parse(bodyText);
+                    const response = await fetch(`${BASE_URL}/invoke`, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify(body)
+                    });
+                    const data = await response.json();
+                    displayResponse('invoke-response', data, response.status, response.status >= 400);
+                } catch (error) {
+                    if (error instanceof SyntaxError) {
+                        displayResponse('invoke-response', { error: 'Invalid JSON: ' + error.message }, 400, true);
+                    } else {
+                        displayResponse('invoke-response', { error: error.message }, 0, true);
+                    }
+                }
+            } else if (endpoint === 'query') {
+                const bodyText = document.getElementById('query-body').value;
+                if (!bodyText.trim()) {
+                    displayResponse('query-response', { error: 'Please enter a JSON request body' }, 400, true);
+                    return;
+                }
+
+                try {
+                    const body = JSON.parse(bodyText);
+                    const response = await fetch(`${BASE_URL}/query`, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify(body)
+                    });
+                    const data = await response.json();
+                    displayResponse('query-response', data, response.status, response.status >= 400);
+                } catch (error) {
+                    if (error instanceof SyntaxError) {
+                        displayResponse('query-response', { error: 'Invalid JSON: ' + error.message }, 400, true);
+                    } else {
+                        displayResponse('query-response', { error: error.message }, 0, true);
+                    }
+                }
+            }
+        }
+    </script>
+</body>
+</html>

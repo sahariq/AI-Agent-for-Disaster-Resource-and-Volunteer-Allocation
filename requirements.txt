@@ -1,4 +1,5 @@
 Flask>=2.3.0,<3.0.0
+flask-cors
 pandas
 numpy
 scikit-learn
